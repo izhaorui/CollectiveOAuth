@@ -186,6 +186,14 @@ _请知悉：经咨询CSDN官方客服得知，CSDN的授权开放平台已经�
 - [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
 - [OAuth 2.0](https://oauth.net/2/)
 
+## 推荐一个精品源码网站
+
+- [锐风资源网(C#精品源码、教程)](https://rthinkingsoft.com)
+- [销售行业财务管理系统Asp.Net MVC+微信小程序](https://rthinkingsoft.com/2020/02/19/sales-finance/)
+- [销客多 3.5.1微信商城 三级分销系统C#源码 ASP.NET公众号网站](https://rthinkingsoft.com/2020/02/19/hishop-3-5-1/)
+- [敏捷开发框架7.0.3 旗舰版 .NET MVC 敏捷快速开发框架+权限+工作流+EF+SqlServer+MySQL+Oracle](https://rthinkingsoft.com/2020/02/19/quick-develop-7-0-3/)
+
+
 ## 关注&交流
 
 |  公众号  |  QQ群  |
