@@ -53,5 +53,20 @@ namespace Come.Web.Sample.Controllers
             var authResponse = request.login(authCallback);
             return Content(JsonConvert.SerializeObject(authResponse));
         }
+
+
+        /// Eleme验证授权
+        /// </summary>
+        /// <param name="authSource"></param>
+        /// <param name="authCallback"></param>
+        /// <returns></returns>
+        public ActionResult ElemeVerification()
+        {
+            var retMsg = new
+            {
+                message = "ok"
+            };
+            return Json(retMsg, JsonRequestBehavior.AllowGet);
+        }
     }
 }
