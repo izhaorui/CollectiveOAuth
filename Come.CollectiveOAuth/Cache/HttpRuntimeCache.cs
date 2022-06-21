@@ -77,7 +77,12 @@ namespace Come.CollectiveOAuth.Cache
         /// <summary>
         /// 缓存
         /// </summary>
-        public static IMemoryCache memoryCache => new MemoryCache(new MemoryCacheOptions() { });
+        //public static IMemoryCache memoryCache => new MemoryCache(new MemoryCacheOptions() { });
+        public static MemoryCache memoryCache { get; set; }
+        static HttpRuntimeCache()
+        {
+            memoryCache = new MemoryCache(new MemoryCacheOptions { });
+        }
 
         /// <summary>
         /// 获取数据缓存
