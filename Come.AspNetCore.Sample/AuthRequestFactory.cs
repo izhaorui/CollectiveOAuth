@@ -27,15 +27,17 @@ namespace Come.AspNetCore.Sample
                     var defaultAuthList = typeof(DefaultAuthSourceEnum).ToList().Select(a => a.Name.ToUpper()).ToList();
                     foreach (var authSource in defaultAuthList)
                     {
-                        var clientConfig = new ClientConfig();
-                        clientConfig.clientId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientId");
-                        clientConfig.clientSecret = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientSecret");
-                        clientConfig.redirectUri = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_RedirectUri");
-                        clientConfig.alipayPublicKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AlipayPublicKey");
-                        clientConfig.unionId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_UnionId");
-                        clientConfig.stackOverflowKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_StackOverflowKey");
-                        clientConfig.agentId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AgentId");
-                        clientConfig.scope = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_Scope");
+                        var clientConfig = new ClientConfig
+                        {
+                            clientId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientId"),
+                            clientSecret = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientSecret"),
+                            redirectUri = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_RedirectUri"),
+                            alipayPublicKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AlipayPublicKey"),
+                            unionId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_UnionId"),
+                            stackOverflowKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_StackOverflowKey"),
+                            agentId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AgentId"),
+                            scope = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_Scope")
+                        };
                         _clientConfigs.Add(authSource, clientConfig);
                     }
                     #endregion
