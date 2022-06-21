@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>net5.0;netstandard2.0;net45</TargetFrameworks>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="AlipaySDKNet.Standard">
       <Version>4.2.13</Version>
     </PackageReference>
