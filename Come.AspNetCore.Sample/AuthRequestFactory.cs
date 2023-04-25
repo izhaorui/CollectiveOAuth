@@ -120,8 +120,8 @@ namespace Come.AspNetCore.Sample
                 case DefaultAuthSourceEnum.XIAOMI:
                     return new XiaoMiAuthRequest(clientConfig, authStateCache);
 
-                case DefaultAuthSourceEnum.DINGTALK_SCAN:
-                    return new DingTalkScanAuthRequest(clientConfig, authStateCache);
+                //case DefaultAuthSourceEnum.DINGTALK_SCAN:
+                //    return new DingTalkScanAuthRequest(clientConfig, authStateCache);
 
                 case DefaultAuthSourceEnum.OSCHINA:
                     return new OschinaAuthRequest(clientConfig, authStateCache);

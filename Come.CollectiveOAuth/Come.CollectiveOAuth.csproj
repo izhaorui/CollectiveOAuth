@@ -10,12 +10,6 @@
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Reference Include="TopSdk">
-			<HintPath>Libraries\TopSdk.dll</HintPath>
-		</Reference>
-	</ItemGroup>
-
 	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
 		<PackageReference Include="AlipaySDKNet.Standard">
 			<Version>4.2.13</Version>
