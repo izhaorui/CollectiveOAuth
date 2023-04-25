@@ -65,12 +65,7 @@
 -------------------------------------------------------------------------------
 
 ## 版本更新
-- 2020-02-01  重新构建类库 => 现支持 **.NET Framework 4.5 ~ 4.6.2**  和  **.NetCore 3.1** 
-
-## 开发计划
-- 添加 推特、淘宝 三方授权
-- 重构.NetCore 3.1环境下缓存使用方式
-- ...
+- 2023-4-25  现支持 **.Net7.0** 
 
 
 ## 特别感谢
@@ -78,8 +73,8 @@
 
 .Net平台下 **CollectiveOAuth**，它仅仅是一个 **第三方授权登录**的**工具类库**，它可以让我们脱离繁琐的第三方登录SDK，让登录变得**So easy!**
 
-- 项目开源地址：[Gitee(https://gitee.com/rthinking/CollectiveOAuth)](https://gitee.com/rthinking/CollectiveOAuth) 
-- 项目开源地址：[Github(https://github.com/fuwei54321/CollectiveOAuth)](https://github.com/fuwei54321/CollectiveOAuth) 
+- 项目开源地址：[Gitee(https://gitee.com/izory/CollectiveOAuth)](https://gitee.com/izory/CollectiveOAuth) 
+
 - 项目文档：[参考文档(https://codoc.rthinkingsoft.cn)](https://codoc.rthinkingsoft.cn)
 
 ## 特点
@@ -170,45 +165,3 @@ _请知悉：经咨询CSDN官方客服得知，CSDN的授权开放平台已经�
 4. commit后push到自己的库
 5. 发起PR（pull request） 请求，提交到`dev`分支
 6. 等待作者合并
-
-## 致谢
-
-在项目立项初期，也对当前开源圈的一些相同类型的项目作过调研，同时本项目也参考过这些项目，再次感谢开源圈内的朋友。
-
-- [JustAuth](https://gitee.com/yadong.zhang/JustAuth): Java 第三方登录授权 SDK
-- [阿里妈妈MUX倾力打造的矢量图标库-iconfont](https://www.iconfont.cn/search/index): 本文档中的图标大部分取自该平台
-- 感谢 JetBrains 提供的免费开源 License：
-<img src="https://images.gitee.com/uploads/images/2020/0128/143027_d7ce1ac2_696459.png" alt="图片引用自lets-mica" style="float:left;">
-
-
-## 关于OAuth
-
-- [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
-- [OAuth 2.0](https://oauth.net/2/)
-
-## 推荐一个精品源码网站
-
-- [锐风资源网(C#精品源码、教程)](https://rthinkingsoft.com)
-- [销售行业财务管理系统Asp.Net MVC+微信小程序](https://rthinkingsoft.com/2020/02/19/sales-finance/)
-- [销客多 3.5.1微信商城 三级分销系统C#源码 ASP.NET公众号网站](https://rthinkingsoft.com/2020/02/19/hishop-3-5-1/)
-- [ASP.NET- 微信企业号OA办公管理系统 源码 企业号移动OA](https://rthinkingsoft.com/2020/02/19/wx-oa-enterprise/)
-- [敏捷开发框架7.0.3 旗舰版 .NET MVC 敏捷快速开发框架+权限+工作流+EF+SqlServer+MySQL+Oracle](https://rthinkingsoft.com/2020/02/19/quick-develop-7-0-3/)
-
-
-## 关注&交流
-
-|  公众号  |  QQ群  |
-| :------------: | :------------: |
-| <img src="https://gitee.com/rthinking/auth_files/raw/master/wx/wechat_account.jpg" width="200" /> | <img src="https://gitee.com/rthinking/auth_files/raw/master/CollectiveOAuth/qq-group.png" width="170"/> |
-
- **QQ群** 
-
-- CollectiveOAuth交流群 （836803890）：专业交流该项目
-
-## 请喝咖啡
-
-| 支付宝  | 微信  |
-| :------------: | :------------: |
-| <img src="https://gitee.com/rthinking/auth_files/raw/master/qrcode/zfb_code.png" width="200"/> | <img src="https://gitee.com/rthinking/auth_files/raw/master/qrcode/wx_code.png" width="200" /> |
-
-开源不求盈利，多少都是心意，生活不易，随缘随缘……
