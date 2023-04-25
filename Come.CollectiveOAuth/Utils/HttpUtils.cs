@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Mime;
+using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Threading;
 
 namespace Come.CollectiveOAuth.Utils
 {
@@ -77,57 +81,36 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="header"></param>
         /// <param name="charset"></param>
         /// <returns></returns>
-        public static string RequestPost(string postUrl, string postData = null, Dictionary<string, object> header = null, string charset = null)
+        public static string RequestPost(string postUrl, string postData = null, Dictionary<string, object> headers = null, string charset = null)
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
-            if (string.IsNullOrWhiteSpace(charset))
-            {
-                charset = "UTF-8";
-            }
+            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
 
-            if (string.IsNullOrWhiteSpace(postData))
-            {
-                postData = "";
-            }
-
-            Stream outstream = null;
-            Stream instream = null;
-            StreamReader sr = null;
-            HttpWebResponse response = null;
-            HttpWebRequest request = null;
-            Encoding encoding = System.Text.Encoding.GetEncoding(charset);
-            
-            byte[] data = encoding.GetBytes(postData);
-            // 准备请求...
             try
             {
-                // 设置参数
-                request = WebRequest.Create(postUrl) as HttpWebRequest;
-                CookieContainer cookieContainer = new CookieContainer();
-                request.CookieContainer = cookieContainer;
-                request.AllowAutoRedirect = true;
-                request.Method = "POST";
-                request.ContentType = "application/json;charset=" + charset.ToLower();
-                request.ContentLength = data.Length;
+                var contentType = "application/json";
+                postData ??= "";
+                using HttpClient client = new HttpClient();
+                client.Timeout = new TimeSpan(0, 0, 30);
+                if (headers != null)
+                {
+                    foreach (var header in headers)
+                        client.DefaultRequestHeaders.Add(header.Key, Convert.ToString(header.Value));
+                }
 
-                ComeSetRequestHeader(request, header);
+                using (HttpContent httpContent = new StringContent(postData, Encoding.UTF8))
+                {
+                    if (contentType != null)
+                        httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
 
-                outstream = request.GetRequestStream();
-                outstream.Write(data, 0, data.Length);
-                outstream.Close();
-                //发送请求并获取相应回应数据
-                response = request.GetResponse() as HttpWebResponse;
-                //直到request.GetResponse()程序才开始向目标网页发送Post请求
-                instream = response.GetResponseStream();
-                sr = new StreamReader(instream, encoding);
-                //返回结果网页（html）代码
-                string content = sr.ReadToEnd();
-                string err = string.Empty;
-                return content;
+                    HttpResponseMessage response = client.PostAsync(postUrl, httpContent).Result;
+                    return response.Content.ReadAsStringAsync().Result;
+                }
             }
             catch (Exception ex)
             {
                 string err = ex.Message;
+                Console.WriteLine(postUrl);
+                Console.WriteLine(err);
                 return string.Empty;
             }
         }
@@ -137,15 +120,37 @@ namespace Come.CollectiveOAuth.Utils
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static string RequestJsonGet(string url, Dictionary<string, object> header = null)
+        public static string RequestJsonGet(string url, Dictionary<string, object> headers = null)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(url);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(builder.ToString());
-            request.UserAgent = "Foo";
-            request.Accept = "application/json";
-            ComeSetRequestHeader(request, header);
-            return ComeRequestGet(request);
+            //StringBuilder builder = new StringBuilder();
+            //builder.Append(url);
+            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(builder.ToString());
+            //request.UserAgent = "Foo";
+            //request.Accept = "application/json";
+            //ComeSetRequestHeader(request, header);
+            //return ComeRequestGet(request);
+            using HttpClient client = new HttpClient();
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                    client.DefaultRequestHeaders.Add(header.Key, Convert.ToString(header.Value));
+            }
+            else
+            {
+                client.DefaultRequestHeaders.Add("ContentType", "application/json");
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+            }
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(url).Result;
+                return response.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception ex)
+            {
+                //TODO 打印日志
+                Console.WriteLine($"[Http请求出错]{url}|{ex.Message}");
+            }
+            return "";
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace Come.CollectiveOAuth.Request
         {
             string response = doPostAuthorizationCode(authCallback.code);
             var accessTokenObject = response.parseStringObject();
-            this.checkResponse(accessTokenObject);
+            CheckResponse(accessTokenObject);
 
             var authToken = new AuthToken();
             authToken.accessToken = accessTokenObject.getString("access_token");
@@ -38,8 +38,11 @@ namespace Come.CollectiveOAuth.Request
         {
             string response = doGetUserInfo(authToken);
             var userObj = response.parseObject();
-            this.checkResponse(userObj);
-
+            CheckResponse(userObj);
+            if (userObj != null && !userObj.ContainsKey("id"))
+            {
+                throw new Exception(response);
+            }
             var authUser = new AuthUser();
             authUser.uuid = userObj.getString("id");
             authUser.username = userObj.getString("login");
@@ -65,7 +68,14 @@ namespace Come.CollectiveOAuth.Request
         /// <returns></returns>
         protected override string doGetUserInfo(AuthToken authToken)
         {
-            return HttpUtils.RequestJsonGet(userInfoUrl(authToken));
+            Dictionary<string, object> map = new()
+            {
+                { "ContentType", "application/json" },
+                { "User-Agent", "ZRAdmin" },
+                { "Authorization", $"Bearer {authToken.accessToken}" }
+            };
+
+            return HttpUtils.RequestJsonGet(userInfoUrl(authToken), map);
         }
 
         /**
@@ -79,10 +89,10 @@ namespace Come.CollectiveOAuth.Request
         {
             return UrlBuilder.fromBaseUrl(source.authorize())
                 .queryParam("client_id", config.clientId)
-                .queryParam("response_type", "code")
+                //.queryParam("response_type", "code")
                 .queryParam("redirect_uri", config.redirectUri)
                 .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "user" : config.scope)
-                .queryParam("state", getRealState(state) + "#wechat_redirect")
+                .queryParam("state", getRealState(state))
                 .build();
         }
 
@@ -92,9 +102,9 @@ namespace Come.CollectiveOAuth.Request
        * @param response 请求结果
        * @return 如果请求结果正常，则返回Exception
        */
-        private void checkResponse(Dictionary<string, object> dic)
+        private void CheckResponse(Dictionary<string, object> dic)
         {
-            if (dic.ContainsKey("error"))
+            if (dic.ContainsKey("error") || dic.Count <= 0)
             {
                 throw new Exception($"{dic.getString("error_description")}");
             }
