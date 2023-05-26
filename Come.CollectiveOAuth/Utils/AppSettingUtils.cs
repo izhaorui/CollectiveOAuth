@@ -13,7 +13,7 @@ namespace Come.CollectiveOAuth.Utils
 #if NET45
             value = System.Configuration.ConfigurationManager.AppSettings[key];
 #else
-            value = Come.CollectiveOAuth.Utils.ConfigurationManager.AppSettings[key];
+            value = ConfigurationManager.AppSettings[key];
 #endif
             if (!string.IsNullOrWhiteSpace(value))
             {

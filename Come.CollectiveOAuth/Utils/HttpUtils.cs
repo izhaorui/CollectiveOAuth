@@ -4,10 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Mime;
-using System.Reflection.PortableExecutable;
 using System.Text;
-using System.Threading;
 
 namespace Come.CollectiveOAuth.Utils
 {
@@ -78,12 +75,12 @@ namespace Come.CollectiveOAuth.Utils
         /// </summary>
         /// <param name="postUrl"></param>
         /// <param name="postData"></param>
-        /// <param name="header"></param>
+        /// <param name="headers"></param>
         /// <param name="charset"></param>
         /// <returns></returns>
         public static string RequestPost(string postUrl, string postData = null, Dictionary<string, object> headers = null, string charset = null)
         {
-            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
 
             try
             {
@@ -109,7 +106,6 @@ namespace Come.CollectiveOAuth.Utils
             catch (Exception ex)
             {
                 string err = ex.Message;
-                Console.WriteLine(postUrl);
                 Console.WriteLine(err);
                 return string.Empty;
             }
@@ -122,13 +118,6 @@ namespace Come.CollectiveOAuth.Utils
         /// <returns></returns>
         public static string RequestJsonGet(string url, Dictionary<string, object> headers = null)
         {
-            //StringBuilder builder = new StringBuilder();
-            //builder.Append(url);
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create(builder.ToString());
-            //request.UserAgent = "Foo";
-            //request.Accept = "application/json";
-            //ComeSetRequestHeader(request, header);
-            //return ComeRequestGet(request);
             using HttpClient client = new HttpClient();
             if (headers != null)
             {
@@ -147,7 +136,6 @@ namespace Come.CollectiveOAuth.Utils
             }
             catch (Exception ex)
             {
-                //TODO 打印日志
                 Console.WriteLine($"[Http请求出错]{url}|{ex.Message}");
             }
             return "";
@@ -157,17 +145,12 @@ namespace Come.CollectiveOAuth.Utils
         /// 发送Get请求
         /// </summary>
         /// <param name="url">地址</param>
-        /// <param name="dic">请求参数定义</param>
-        public static string RequestGet(string url, Dictionary<string, object> header = null)
+        /// <param name="headers">请求header</param>
+        public static string RequestGet(string url, Dictionary<string, object> headers = null)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(url);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(builder.ToString());
-            request.ContentType = "application/json;charset=utf-8;";
-            ComeSetRequestHeader(request, header);
-            return ComeRequestGet(request);
+            //ComeSetRequestHeader(request, headers);
+            return RequestJsonGet(url, headers);
         }
-
 
         /// <summary>
         /// 通用的设置RequestHeader方法
@@ -215,65 +198,5 @@ namespace Come.CollectiveOAuth.Utils
                 collection[name] = value;
             }
         }
-
-
-        /// <summary>
-        /// 通用的get请求
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public static string ComeRequestGet(HttpWebRequest request)
-        {
-            string result = "";
-            request.AllowAutoRedirect = true;
-            request.Method = "GET";
-            request.CookieContainer = new CookieContainer();
-            request.Credentials = CredentialCache.DefaultCredentials;
-            HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
-            Stream stream = resp.GetResponseStream();
-            try
-            {
-                //获取内容
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    result = reader.ReadToEnd();
-                }
-            }
-            finally
-            {
-                stream.Close();
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// 通用的Post请求
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public static string ComeRequestPost(HttpWebRequest request)
-        {
-            string result = "";
-            request.AllowAutoRedirect = true;
-            request.Method = "POST";
-            request.CookieContainer = new CookieContainer();
-            request.Credentials = CredentialCache.DefaultCredentials;
-            HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
-            Stream stream = resp.GetResponseStream();
-            try
-            {
-                //获取内容
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    result = reader.ReadToEnd();
-                }
-            }
-            finally
-            {
-                stream.Close();
-            }
-            return result;
-        }
-
     }
 }

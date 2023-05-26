@@ -5,13 +5,20 @@ using Come.CollectiveOAuth.Config;
 using Come.CollectiveOAuth.Enums;
 using Come.CollectiveOAuth.Request;
 using Come.CollectiveOAuth.Utils;
+using Microsoft.Extensions.Configuration;
 
 namespace Come.AspNetCore.Sample
 {
     public class AuthRequestFactory
     {
+        private IConfiguration configuration;
+        public AuthRequestFactory() { }
 
-        #region 从Webconfig中获取默认配置（可以改造成从数据库中读取）
+        public AuthRequestFactory(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+        #region 从appsettings.json中获取默认配置（可以改造成从数据库中读取）
         public Dictionary<string, ClientConfig> _clientConfigs;
 
         public Dictionary<string, ClientConfig> ClientConfigs
@@ -29,14 +36,14 @@ namespace Come.AspNetCore.Sample
                     {
                         var clientConfig = new ClientConfig
                         {
-                            clientId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientId"),
-                            clientSecret = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientSecret"),
-                            redirectUri = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_RedirectUri"),
-                            alipayPublicKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AlipayPublicKey"),
-                            unionId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_UnionId"),
-                            stackOverflowKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_StackOverflowKey"),
-                            agentId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AgentId"),
-                            scope = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_Scope")
+                            clientId = configuration[$"{_defaultPrefix}{authSource}_ClientId"],
+                            clientSecret = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_ClientSecret"),
+                            redirectUri = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_RedirectUri"),
+                            alipayPublicKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AlipayPublicKey"),
+                            unionId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_UnionId"),
+                            stackOverflowKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_StackOverflowKey"),
+                            agentId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AgentId"),
+                            scope = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_Scope")
                         };
                         _clientConfigs.Add(authSource, clientConfig);
                     }
@@ -62,127 +69,67 @@ namespace Come.AspNetCore.Sample
             {
                 return ClientConfigs[authSource];
             }
-        } 
+        }
         #endregion
 
-        /**
-        * 返回AuthRequest对象
-        *
-        * @return {@link AuthRequest}
-        */
-        public IAuthRequest getRequest(string authSource)
+        /// <summary>
+        /// 返回AuthRequest对象
+        /// </summary>
+        /// <param name="authSource"></param>
+        /// <returns></returns>
+        public IAuthRequest GetRequest(string authSource)
         {
             // 获取 CollectiveOAuth 中已存在的
-            IAuthRequest authRequest = getDefaultRequest(authSource);
+            IAuthRequest authRequest = GetDefaultRequest(authSource);
             return authRequest;
         }
-
 
         /// <summary>
         /// 获取默认的 Request
         /// </summary>
         /// <param name="authSource"></param>
         /// <returns>{@link AuthRequest}</returns>
-        private IAuthRequest getDefaultRequest(string authSource)
+        private IAuthRequest GetDefaultRequest(string authSource)
         {
             ClientConfig clientConfig = GetClientConfig(authSource);
             IAuthStateCache authStateCache = new DefaultAuthStateCache();
 
             DefaultAuthSourceEnum authSourceEnum = GlobalAuthUtil.enumFromString<DefaultAuthSourceEnum>(authSource);
 
-            switch (authSourceEnum)
+            return authSourceEnum switch
             {
-
-                case DefaultAuthSourceEnum.WECHAT_MP:
-                    return new WeChatMpAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.WECHAT_OPEN:
-                    return new WeChatOpenAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.WECHAT_ENTERPRISE:
-                    return new WeChatEnterpriseAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.WECHAT_ENTERPRISE_SCAN:
-                    return new WeChatEnterpriseScanAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.ALIPAY_MP:
-                    return new AlipayMpAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.GITEE:
-                    return new GiteeAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.GITHUB:
-                    return new GithubAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.BAIDU:
-                    return new BaiduAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.XIAOMI:
-                    return new XiaoMiAuthRequest(clientConfig, authStateCache);
-
+                DefaultAuthSourceEnum.WECHAT_MP => new WeChatMpAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.WECHAT_OPEN => new WeChatOpenAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.WECHAT_ENTERPRISE => new WeChatEnterpriseAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.WECHAT_ENTERPRISE_SCAN => new WeChatEnterpriseScanAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.ALIPAY_MP => new AlipayMpAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.GITEE => new GiteeAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.GITHUB => new GithubAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.BAIDU => new BaiduAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.XIAOMI => new XiaoMiAuthRequest(clientConfig, authStateCache),
                 //case DefaultAuthSourceEnum.DINGTALK_SCAN:
                 //    return new DingTalkScanAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.OSCHINA:
-                    return new OschinaAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.CODING:
-                    return new CodingAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.LINKEDIN:
-                    return new LinkedInAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.WEIBO:
-                    return new WeiboAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.QQ:
-                    return new QQAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.DOUYIN:
-                    return new DouyinAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.GOOGLE:
-                    return new GoogleAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.FACEBOOK:
-                    return new FackbookAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.MICROSOFT:
-                    return new MicrosoftAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.TOUTIAO:
-                    return new ToutiaoAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.TEAMBITION:
-                    return new TeambitionAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.RENREN:
-                    return new RenrenAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.PINTEREST:
-                    return new PinterestAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.STACK_OVERFLOW:
-                    return new StackOverflowAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.HUAWEI:
-                    return new HuaweiAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.KUJIALE:
-                    return new KujialeAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.GITLAB:
-                    return new GitlabAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.MEITUAN:
-                    return new MeituanAuthRequest(clientConfig, authStateCache);
-
-                case DefaultAuthSourceEnum.ELEME:
-                    return new ElemeAuthRequest(clientConfig, authStateCache);
-
-                default:
-                    return null;
-            }
+                DefaultAuthSourceEnum.OSCHINA => new OschinaAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.CODING => new CodingAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.LINKEDIN => new LinkedInAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.WEIBO => new WeiboAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.QQ => new QQAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.DOUYIN => new DouyinAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.GOOGLE => new GoogleAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.FACEBOOK => new FackbookAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.MICROSOFT => new MicrosoftAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.TOUTIAO => new ToutiaoAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.TEAMBITION => new TeambitionAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.RENREN => new RenrenAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.PINTEREST => new PinterestAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.STACK_OVERFLOW => new StackOverflowAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.HUAWEI => new HuaweiAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.KUJIALE => new KujialeAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.GITLAB => new GitlabAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.MEITUAN => new MeituanAuthRequest(clientConfig, authStateCache),
+                DefaultAuthSourceEnum.ELEME => new ElemeAuthRequest(clientConfig, authStateCache),
+                _ => null,
+            };
         }
     }
 }
