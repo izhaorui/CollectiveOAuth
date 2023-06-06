@@ -1,4 +1,6 @@
-﻿using Come.CollectiveOAuth.Models;
+﻿using Come.CollectiveOAuth.Config;
+using Come.CollectiveOAuth.Models;
+using Come.CollectiveOAuth.Request;
 using Come.CollectiveOAuth.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -64,5 +66,44 @@ namespace Come.AspNetCore.Sample.Controllers
             var authResponse = request.login(authCallback);
             return Content(JsonConvert.SerializeObject(authResponse));
         }
+
+        #region GITEE 授权
+        /// <summary>
+        /// 授权
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GiteeAurhorize()
+        {
+            //var clientConfig = new ClientConfig
+            //{
+            //    clientId = configuration.GetValue<string>($"CollectiveOAuth_XXXXXX_ClientId"),
+            //    clientSecret = configuration.GetValue<string>($"CollectiveOAuth_XXXXXX_ClientSecret"),
+            //    redirectUri = configuration.GetValue<string>($"CollectiveOAuth_XXXXXX_RedirectUri"),
+            //    scope = configuration.GetValue<string>($"CollectiveOAuth_XXXXXX_Scope"),
+            //};
+            var clientConfig = configuration.GetSection("OAuthConfig:GITEE").Get<ClientConfig>();
+            var state = AuthStateUtils.createState();
+            var authRequest = new GiteeAuthRequest(clientConfig);
+            var authorize = authRequest.authorize(state);
+            //authRequest.login(authCallback);
+            Console.WriteLine(authorize);
+            return Redirect(authorize);
+        }
+
+        /// <summary>
+        /// 授权回调方法
+        /// </summary>
+        /// <param name="authSource"></param>
+        /// <param name="authCallback"></param>
+        /// <returns></returns>
+        public IActionResult GiteeCallback(AuthCallback authCallback)
+        {
+            var clientConfig = configuration.GetSection("OAuthConfig:GITEE").Get<ClientConfig>();
+            var request = new GiteeAuthRequest(clientConfig);
+            
+            var authResponse = request.login(authCallback);
+            return Content(JsonConvert.SerializeObject(authResponse));
+        }
+        #endregion
     }
 }

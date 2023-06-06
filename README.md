@@ -89,30 +89,31 @@
 - 引入依赖
 <img src="https://gitee.com/rthinking/auth_files/raw/master/CollectiveOAuth/depend-on.jpg" width="600"></img>
 
-- 配置授权信息(默认配置在webconfig中, 可以改造存储数据库或者其它任意地方)
+- 配置授权信息(默认配置在`appsettings.json`中, 可以改造存储数据库或者其它任意地方)
 ```C#
-<!--Demo: 微信服务号授权配置-->
-<add key="CollectiveOAuth_WECHAT_MP_ClientId" value="wxer6785660834656" />
-<add key="CollectiveOAuth_WECHAT_MP_ClientSecret" value="98967867678678678546434345344" />
-<add key="CollectiveOAuth_WECHAT_MP_Scope" value="snsapi_userinfo" />
-<add key="CollectiveOAuth_WECHAT_MP_RedirectUri" value="https://yours.domain.com/oauth2/callback?authSource=WECHAT_MP" />
+<!--Demo: 微信企业扫码授权配置-->
+"OAuthConfig": {
+	"WECHAT_ENTERPRISE_SCAN": {
+		"ClientId": "xxxxxxxxxxxxxxxxx",
+		"AgentId": "xxxxxx",
+		"ClientSecret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+		"RedirectUri": "https://yours.domain.com/oauth2/callback?authSource=WECHAT_ENTERPRISE_SCAN"
+	}
+}
 ```
 
 - 调用api
 ```C#
 // 创建授权request
-var clientConfig = new ClientConfig();
-clientConfig.clientId = AppSettingUtils.GetStrValue($"CollectiveOAuth_XXXXXX_ClientId");
-clientConfig.clientSecret = AppSettingUtils.GetStrValue($"CollectiveOAuth_XXXXXX_ClientSecret");
-clientConfig.redirectUri = AppSettingUtils.GetStrValue($"CollectiveOAuth_XXXXXX_RedirectUri");
-clientConfig.scope = AppSettingUtils.GetStrValue($"CollectiveOAuth_XXXXXX_Scope");
-
-AuthRequest authRequest = new GiteeAuthRequest(clientConfig);
+var clientConfig = configuration.GetSection("OAuthConfig:GITEE").Get<ClientConfig>();
+var state = AuthStateUtils.createState();
+var authRequest = new GiteeAuthRequest(clientConfig);
 // 生成授权页面
-authRequest.authorize("state");
+var authorize = authRequest.authorize(state);
+//authRequest.login(authCallback);
+
 // 授权登录后会返回code（auth_code（仅限支付宝））、state，可以用AuthCallback类作为回调接口的参数
 // 注：CollectiveOAuth默认保存state的时效为5分钟，5分钟内未使用则会自动清除过期的state
-authRequest.login(callback);
 ```
 
 #### API列表

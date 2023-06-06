@@ -19,35 +19,34 @@ namespace Come.AspNetCore.Sample
             this.configuration = configuration;
         }
         #region 从appsettings.json中获取默认配置（可以改造成从数据库中读取）
-        public Dictionary<string, ClientConfig> _clientConfigs;
+        public Dictionary<string, ClientConfig> _clientConfigs =new Dictionary<string, ClientConfig>();
 
         public Dictionary<string, ClientConfig> ClientConfigs
         {
             get
             {
-                if (_clientConfigs == null)
+                if (_clientConfigs == null || _clientConfigs.Count <= 0)
                 {
-                    var _defaultPrefix = "CollectiveOAuth_";
-                    _clientConfigs = new Dictionary<string, ClientConfig>();
-
-                    #region 或者默认授权列表数据
+                    var _defaultPrefix = "OAuthConfig:";
+ 
                     var defaultAuthList = typeof(DefaultAuthSourceEnum).ToList().Select(a => a.Name.ToUpper()).ToList();
                     foreach (var authSource in defaultAuthList)
                     {
-                        var clientConfig = new ClientConfig
-                        {
-                            clientId = configuration[$"{_defaultPrefix}{authSource}_ClientId"],
-                            clientSecret = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_ClientSecret"),
-                            redirectUri = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_RedirectUri"),
-                            alipayPublicKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AlipayPublicKey"),
-                            unionId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_UnionId"),
-                            stackOverflowKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_StackOverflowKey"),
-                            agentId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AgentId"),
-                            scope = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_Scope")
-                        };
+                        //var clientConfig = new ClientConfig
+                        //{
+                        //    clientId = configuration[$"{_defaultPrefix}{authSource}_ClientId"],
+                        //    clientSecret = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_ClientSecret"),
+                        //    redirectUri = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_RedirectUri"),
+                        //    alipayPublicKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AlipayPublicKey"),
+                        //    unionId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_UnionId"),
+                        //    stackOverflowKey = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_StackOverflowKey"),
+                        //    agentId = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_AgentId"),
+                        //    scope = configuration.GetValue<string>($"{_defaultPrefix}{authSource}_Scope")
+                        //};
+                        var clientConfig = configuration.GetSection($"{_defaultPrefix}{authSource}").Get<ClientConfig>();
+
                         _clientConfigs.Add(authSource, clientConfig);
                     }
-                    #endregion
                 }
                 return _clientConfigs;
             }
